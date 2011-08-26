@@ -4,21 +4,20 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.*;
 
 public class Shad {
 	public static final String GAME_TITLE = "My Game";
 	private static final int FRAMERATE = 60;
 	private static boolean finished;
-	private static float angle;
-	private static float velocity;
-	private static float acceleration;
-	private static float scale;
+	private static float a=1;
+	private static Camera camera;
 	
 	public static void main(String[] args) {
 		boolean fullscreen = (args.length == 1 && args[0].equals("-fullscreen"));
  
 		try {
-			init(fullscreen);
+            init(true);
 			run();
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -37,7 +36,7 @@ public class Shad {
 	}
  
 	private static void run() {
- 
+		camera = new Camera();
 		while (!finished) {
 			Display.update();
  
@@ -75,42 +74,46 @@ public class Shad {
 			Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 			finished = true;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)){
-			acceleration -= .05f;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-			acceleration += .05f;
-		}
-		velocity += acceleration;
-		angle += velocity % 360;
-		scale = (float) (1+Math.abs(Math.pow(velocity/10,2)));
-		acceleration -= acceleration/3;
+		
 	}
   
 	private static void render() {
-	  
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
-	    GL11.glLoadIdentity();
-	    GL11.glOrtho(0, Display.getDisplayMode().getWidth(), 0, Display.getDisplayMode().getHeight(), -1, 1);
+	    	GL11.glLoadIdentity();
+	    	GL11.glFrustum(-1, 1, -1, 1, 1, 1000);
+//	    	GLU.gluLookAt((float)camera.getXPos(), (float)camera.getYPos() , (float)camera.getZPos(), 
+//	    			(float)camera.getXLPos(), (float)camera.getYLPos(), (float)camera.getZLPos(),
+//                    0.0f, 1.0f, 0.0f);
+	    
 	    GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	 
-	    // clear the screen
-	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
-	 
-	    // center square according to screen size
+	    
 	    GL11.glPushMatrix();
-	    GL11.glTranslatef(Display.getDisplayMode().getWidth() / 2, Display.getDisplayMode().getHeight() / 2, 0.0f);{
-	 
-	      // rotate and scale square according to angle
-	    	GL11.glRotatef(angle, 0, 0, 1.0f);
-	    	GL11.glBegin(GL11.GL_QUADS);{
-	        	GL11.glVertex2i((int)(-50*scale),(int)(-50*scale));
-	        	GL11.glVertex2i((int)(50*scale),(int)(-50*scale));
-	        	GL11.glVertex2i((int)(50*scale),(int)(50*scale));
-	        	GL11.glVertex2i((int)(-50*scale),(int)(50*scale));
-	    	}
+	    	GL11.glTranslatef( 0, 0, 0 );
+	    	GL11.glRotatef(10f,0,0,0);
+	    	GL11.glBegin(GL11.GL_TRIANGLES);
+		    	GL11.glColor4f(0f, 1f, 0f, 1f);
+	    		GL11.glVertex3f(0f, 1f, 0f);
+	    		GL11.glVertex3f(1f, 0f, 1f);
+	    		GL11.glVertex3f(1f, 0f, -1f);
+	    		
+	    		GL11.glColor4f(1f, 0f, 0f, 0.2f);
+	    		GL11.glVertex3f(0f, 1f, 0f);
+	    		GL11.glVertex3f(1f, 0f, -1f);
+	    		GL11.glVertex3f(-1f, 0f, -1f);
+	    		
+	    		GL11.glColor4f(0f, 0f, 1f, 0.2f);
+	    		GL11.glVertex3f(0f, 1f, 0f);
+	    		GL11.glVertex3f(-1f, 0f, -1f);
+	    		GL11.glVertex3f(-1f, 0f, 1f);
+	    		
+	    		GL11.glColor4f(0f, 0f, 0f, 0.2f);
+	    		GL11.glVertex3f(0f, 1f, 0f);
+	    		GL11.glVertex3f(-1f, 0f, 1f);
+    		GL11.glVertex3f(1f, 0f, 1f);
 	        GL11.glEnd();
-	    }
 	    GL11.glPopMatrix();
+	    
 	}
 }
