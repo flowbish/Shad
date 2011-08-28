@@ -1,71 +1,75 @@
 package com.SuckyBlowfish.Shad;
 
 public class Camera {
-	private double xPos;
-    private double yPos;
-    private double zPos;
+	private double _x;
+    private double _y;
+    private double _z;
     
-    private double xLPos;
-    private double yLPos;
-    private double zLPos;
+    private double _lx;
+    private double _ly;
+    private double _lz;
+    
+    private double distance;
+    private double min_distance;
     
     private double pitch;
     private double yaw;
     
     public Camera()
-    {
-        xPos = 0;
-        yPos = 0;
-        zPos = 0;
+    {        
+        _lx = 0;
+        _ly = 0;
+        _lz = 0;
         
-        xLPos = 0;
-        yLPos = 0;
-        zLPos = 10;
-    }
-    
-    public Camera(double xPos, double yPos, double zPos, double xLPos, double yLPos, double zLPos)
-    {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.zPos = zPos;
+        distance = 300;
+        min_distance=120;
         
-        this.xLPos = xLPos;
-        this.yLPos = yLPos;
-        this.zLPos = zLPos;
+        pitch = Math.PI/4;
+        yaw = Math.PI/4;
     }
+	
+    public void mouseRotate(int DX, int DY){
+		yaw+=(float)DX/30/Math.PI;
+		
+		pitch+=((float)DY/30/Math.PI);
+		if (pitch>Math.PI)pitch=Math.PI;
+		if (pitch<0)pitch=0;
+		
+		_x=distance*Math.cos(yaw)*Math.sin(pitch);
+		_y=distance*Math.cos(pitch);
+		_z=distance*Math.sin(yaw)*Math.sin(pitch);
+	}
     
-    public void setPitch(double pitch)
-    {
+    public void wheelZoom(int DWheel){
+		distance-=(float)DWheel/10;
+		if (distance<min_distance)distance=min_distance;
+	}
+    
+    public void setPitch(double pitch){
     	this.pitch = pitch;
     }
     
-    public void setYaw(double yaw)
-    {
+    public void setYaw(double yaw){
     	this.yaw = yaw;
     }
 
-    public void updatePosition(double xPos, double yPos, double zPos)
-    {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.zPos = zPos;
+    public void setPosition(double xPos, double yPos, double zPos){
+        this._x = xPos;
+        this._y = yPos;
+        this._z = zPos;
     }
     
-    public void lookPosition(double xLPos, double yLPos, double zLPos)
-    {
-        this.xLPos = xLPos;
-        this.yLPos = yLPos;
-        this.zLPos = zLPos;
+    public void setLookPosition(double xLPos, double yLPos, double zLPos){
+        this._lx = xLPos;
+        this._ly = yLPos;
+        this._lz = zLPos;
     }
-
-    
-    // Moves the entity forward according to its pitch and yaw and the magnitude.
     
     public void moveForward(double magnitude)
     {
-        double xCurrent = this.xPos;
-        double yCurrent = this.yPos;
-        double zCurrent = this.zPos;
+        double xCurrent = this._x;
+        double yCurrent = this._y;
+        double zCurrent = this._z;
         
         // Spherical coordinates maths
         double xMovement = magnitude * Math.cos(pitch) * Math.cos(yaw); 
@@ -76,11 +80,10 @@ public class Camera {
         double yNew = yCurrent + yMovement;
         double zNew = zCurrent + zMovement;
         
-        updatePosition(xNew, yNew, zNew);
+        setPosition(xNew, yNew, zNew);
     }
     
-    public void strafeLeft(double magnitude)
-    {
+    public void strafeLeft(double magnitude){
         double pitchTemp = pitch;
         pitch = 0;
         yaw = yaw - (0.5 * Math.PI);
@@ -90,8 +93,7 @@ public class Camera {
         yaw = yaw + (0.5 * Math.PI);
     }
     
-    public void strafeRight(double magnitude)
-    {
+    public void strafeRight(double magnitude){
         double pitchTemp = pitch;
         pitch = 0;
 
@@ -100,70 +102,18 @@ public class Camera {
         yaw = yaw - (0.5 * Math.PI);
 
         pitch = pitchTemp;
-    }
-    
-    
-    public void look(double distanceAway)
-    {
-        if(pitch > 1.0)
-        pitch = 0.99;
-        
-        if(pitch < -1.0)
-        pitch = -0.99;
-         
-        moveForward(10);
-        
-        double xLook = xPos;
-        double yLook = yPos;
-        double zLook = zPos;
-        
-        moveForward(-10);
-        
-        lookPosition(xLook, yLook, zLook);
-    }
+    }   
            
     
     /* -------Get commands--------- */
-    
-    public double getXPos()
-    {
-        return xPos;
-    }
-    
-    public double getYPos()
-    {
-        return yPos;
-    }
-    
-    public double getZPos()
-    {
-        return zPos;
-    }
-    
-    public double getXLPos()
-    {
-        return xLPos;
-    }
-    
-    public double getYLPos()
-    {
-        return yLPos;
-    }
-    
-    public double getZLPos()
-    {
-        return zLPos;
-    }
-    
-    public double getPitch()
-    {
-        return pitch;
-    }
-    
-    public double getYaw()
-    {
-        return yaw;
-    }
+    public double getX() {return _x;}
+    public double getY() {return _y;}
+    public double getZ() {return _z;}
+    public double getXL(){return _lx;}
+    public double getYL(){return _ly;}
+    public double getZL(){return _lz;}
+    public double getPitch(){return pitch;}
+    public double getYaw()  {return yaw;}
     
     /* --------------------------- */
     

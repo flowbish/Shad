@@ -19,6 +19,9 @@
     <fileset dir="${lib.dir}/native">
       <include name="*.so"/>
     </fileset>
+    <fileset dir="${build.dir}">
+      <include name="*.jar"/>
+    </fileset>
     <pathelement path="${build.dir}"/>
   </path>
   <!-- Targets -->
