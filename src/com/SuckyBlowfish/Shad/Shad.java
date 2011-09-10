@@ -32,24 +32,22 @@ public class Shad {
 	private void init(boolean fullscreen) throws Exception {
 		Display.setTitle(GAME_TITLE);
 		Display.setFullscreen(fullscreen);
-		Display.setVSyncEnabled(true);
+		Display.setVSyncEnabled(false);
 		Display.create();
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_LIGHT0);
-		GL11.glLightf(GL11.GL_LIGHT0, GL11.GL_CONSTANT_ATTENUATION, 1.0f);
-		GL11.glLightf(GL11.GL_LIGHT0, GL11.GL_SPECULAR, 0.3f);
 		run();
 	}
  
-	private void run() {		
+	private void run() {
 		camera = new Camera();
 		level = new Level();
 		Mouse.setGrabbed(true);
 		
-		while (!finished) {
+		while (!finished) {			
 			Display.update();
 			if (Display.isCloseRequested())finished = true;
 			else if (Display.isActive()) {
@@ -90,8 +88,13 @@ public class Shad {
 	    				  0f, 1f, 0f);
 	    	
 	    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	    	GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT |
 		    		     GL11.GL_DEPTH_BUFFER_BIT);
-		    level.render();
+		    GL11.glClearDepth(1);
+		    GL11.glPushMatrix();
+		    	GL11.glScaled(camera.getZoom(), camera.getZoom(), camera.getZoom());
+		    	level.render();
+		    GL11.glPopMatrix();
 	}
 }
